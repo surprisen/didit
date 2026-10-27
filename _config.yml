@@ -3,3 +3,5 @@ title: Didit
 description: 활성 할 일을 항상 눈앞에 두는 심플 Todo 앱
 lang: ko
 theme: jekyll-theme-primer
+# 사이트 주소. surprisen.github.io에 연결한 도메인이며 이 저장소는 /didit 아래에 게시된다 (canonical·og:url이 https로 나오게 명시)
+url: https://hoonest.net
