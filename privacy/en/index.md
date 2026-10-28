@@ -4,7 +4,7 @@
 
 [한국어](../) · English
 
-Didit (the "App") is developed and operated by 남기훈, an individual developer in the Republic of Korea (the "Operator"). The Operator respects your privacy and complies with applicable laws, including the Korean Personal Information Protection Act and, where it applies to you, the EU and UK General Data Protection Regulation (GDPR), as well as the Google Play Developer Policy and the Apple App Store Review Guidelines. This policy explains how the Didit apps for Android, iOS (including widgets), macOS (including widgets) and Windows, and the Didit websites, handle your information.
+Didit (the "App") is developed and operated by KiHoon Nam (남기훈), an individual developer in the Republic of Korea (the "Operator"). The Operator respects your privacy and complies with applicable laws, including the Korean Personal Information Protection Act and, where it applies to you, the EU and UK General Data Protection Regulation (GDPR), as well as the Google Play Developer Policy and the Apple App Store Review Guidelines. This policy explains how the Didit apps for Android, iOS (including widgets), macOS (including widgets) and Windows, and the Didit websites, handle your information.
 
 This English version is a translation of the Korean original. If they differ, the Korean version prevails, except where the law of your country requires otherwise.
 
@@ -160,7 +160,7 @@ If the App's data processing changes, we update this policy and its effective da
 
 Please send questions about this policy, complaints and requests about your personal information to:
 
-* **Privacy officer (controller)**: 남기훈, Didit operator (individual developer), Republic of Korea
+* **Privacy officer (controller)**: KiHoon Nam (남기훈), Didit operator (individual developer), Republic of Korea
 * **Email**: didit@hoonest.net
 
 ---
