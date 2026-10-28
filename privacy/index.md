@@ -103,4 +103,4 @@ Didit은 만 14세 미만 아동을 대상으로 하지 않으며, 아동의 개
 본 방침에 대한 문의나 제안은 아래 연락처로 보내 주시기 바랍니다.
 
 * **개발자 / 운영자**: surprisen (Didit 개발팀)
-* **이메일**: surprisen85@gmail.com
+* **이메일**: didit@hoonest.net
