@@ -23,21 +23,22 @@ Didit has no sign-up, does not collect advertising identifiers, and uses no anal
 
 ### 2) Google account connection and cloud sync (optional)
 Processed only if you connect a Google account in Settings.
-* **What**: your Google account email address, the task sync file (`todonotification_backup.json`), and a device activity record (one empty file per device whose name contains the device's random identifier and type — Android, iOS, Windows or macOS — and whose modification time serves as the last activity time).
+* **What and where**:
+  * Your Google account email address: kept in the app settings on your device. Even after you disconnect, it stays on the device as the "previous account" so that, when you later connect a different account, the App can decide how to protect your existing tasks. It is deleted when you uninstall the App.
+  * The task sync file (`todonotification_backup.json`, containing your tasks and the random identifier of the device that last uploaded it) and a device activity record (one empty file per device whose name contains the device's random identifier and type — Android, iOS, Windows or macOS — and whose modification time serves as the last activity time): kept in a hidden app-specific folder (`appDataFolder`) in your own Google Drive.
 * **Purpose**: syncing and backing up your tasks across your devices. The device activity record is used only to avoid sending real-time sync signals (see 3 below) when no other recently used device exists on the same account.
-* **Where**: a hidden app-specific folder (`appDataFolder`) in your own Google Drive.
 * **Access scope**: the App cannot access your Drive as a whole; it can only access the folder Didit created. The only Google permissions requested are access to that app folder (`https://www.googleapis.com/auth/drive.appdata`) and sign-in with email verification (`openid`, `email`).
 * **Google API Services User Data Policy**: Didit's use and transfer of information received from Google APIs adheres to the [Google API Services User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use requirements. This information is used only to sync your tasks. It is not used for advertising, not sold, not transferred to third parties, and not used to develop, improve or train generalized artificial intelligence or machine learning models.
 * **Sign-in credentials**: kept only on your device (Android: Google Play services; iOS: the device keychain, shared by the app and its Didit widgets so that widgets and Siri can sync without opening the app, usable only on that device and never moved by backup or device transfer; macOS: the device keychain, used only by the app; Windows: the `%LOCALAPPDATA%\Didit\GoogleAuth` folder).
 
-### 3) Real-time sync signals (when a Google account is connected)
-When a task changes on one device, the App sends a signal so that your other devices can fetch the latest data right away. **The signal does not contain your tasks.**
+### 3) Real-time sync signals
+When a task changes on one device, the App sends a signal so that your other devices can fetch the latest data right away. **The signal does not contain your tasks.** Signals are sent and received only after you connect a Google account. However, to be ready to receive signals, the Android and iOS apps create a device registration token with Firebase Cloud Messaging and the Apple Push Notification service (below) when you first open the app (the token contains no account or tasks).
 * **Didit relay server (operated on Cloudflare Workers)**
   * Sent: a hash value derived from your account email (not the email itself) and the device's random identifier.
   * Purpose: delivering sync signals to your other devices on the same account.
   * Retention: not stored. To avoid duplicate deliveries, the hash value and request time are kept in memory for a few seconds only. Cloudflare may process network information (such as IP addresses) while handling requests.
 * **Firebase Cloud Messaging (Google; Android and iOS apps)**
-  * Processed: the device registration token (Firebase installation ID) needed for push delivery and a subscription topic made from the hash value above. On iOS, the Apple Push Notification service (APNs) device token is processed as well.
+  * Processed: the device registration token (Firebase installation ID, created when you first open the app) needed for push delivery and a subscription topic made from the hash value above (created after you connect an account). On iOS, the Apple Push Notification service (APNs) device token is processed as well.
   * Purpose: delivering the relay's signals to Android devices and to iOS devices (when the app is not on screen). On Android nothing is displayed. On iOS the signal arrives as a silent notification; the device syncs on its own and then fills the notification with tasks already stored on the device (the signal itself contains no tasks). If you have not allowed notifications on iOS, nothing is displayed and the App only syncs.
 * **Apple Push Notification service (Apple; iOS app)**
   * Processed: the signal above (no tasks) and the APNs device token.
@@ -76,8 +77,10 @@ If the GDPR applies to you, we rely on the following legal bases: providing the 
 | :--- | :--- | :--- |
 | Tasks and settings on your device | Until you delete them or uninstall the App. Completed tasks are deleted automatically after the retention period you choose (30 days by default) | Deleted from the device when you uninstall the App or clear its data |
 | Sync file and device activity records in Google Drive | Until you delete them in Drive or delete your Google account. **They remain even if you disconnect your account.** The sync file holds completed tasks from the last 30 days (up to 200) and deletion records for 30 days only, and activity records of other devices inactive for more than 30 days are removed | Delete the app data in Drive as described in section 6 |
+| Google account email (device settings) | As the current account while connected, and as the previous account after you disconnect, until you uninstall the App | Deleted from the device when you uninstall the App or clear its data |
 | Google sign-in credentials | Until you disconnect your account or uninstall the App | Deleted from the device when you disconnect |
 | Real-time sync subscription (Firebase) | Until you disconnect your account or uninstall the App | Unsubscribed when you disconnect |
+| Push device registration tokens (Firebase, APNs) | Until you uninstall the App (managed by Google and Apple) | No longer used once the App is uninstalled |
 | Signals passing through the relay server | Not stored (kept in memory only for the few seconds needed to deliver them, or while a connection lasts) | Disappear immediately after delivery or when the connection closes |
 
 ---
@@ -94,7 +97,7 @@ To provide the App's features, we use the following service providers (processor
 | Google LLC | Firebase Cloud Messaging | Delivering sync signals to Android and iOS devices |
 | Apple Inc. | Apple Push Notification service (APNs) | Delivering sync signals to iOS devices (no tasks) |
 | Cloudflare, Inc. | Cloudflare Workers | Relaying sync signals (no tasks, not stored), hosting the Didit website |
-| GitHub, Inc. | GitHub Pages | Serving the public file for the update check, hosting the website (no personal information sent) |
+| GitHub, Inc. | GitHub Pages | Serving the public file for the update check, hosting the website (no account or task information is sent; only network information such as IP addresses is processed to handle requests) |
 
 ---
 
@@ -104,12 +107,14 @@ The providers above are located outside Korea, and the following information is 
 
 | Recipient (contact) | Country | Information | When | Purpose | Retention |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| Google LLC ([privacy contact](https://policies.google.com/privacy)) | United States and other countries where Google has data centers | Account email, task sync file, device activity records, push device token, subscription topic made from a hash | When you sign in, sync or receive signals after connecting a Google account | Authentication, sync and backup, signal delivery | As in section 3 |
-| Apple Inc. ([privacy contact](https://www.apple.com/legal/privacy/contact/)) | United States | APNs device token, sync signals (no tasks) | When iOS receives sync signals | Delivering signals to iOS devices | Until delivered |
+| Google LLC ([privacy contact](https://policies.google.com/privacy)) | United States and other countries where Google has data centers | Account email, task sync file, device activity records, push device token, subscription topic made from a hash | When you first open the app (Android and iOS push device token), and when you sign in, sync or receive signals after connecting a Google account | Authentication, sync and backup, signal delivery | As in section 3 |
+| Apple Inc. ([privacy contact](https://www.apple.com/legal/privacy/contact/)) | United States | APNs device token, sync signals (no tasks) | When you first open the iOS app (device token) and when it receives sync signals | Delivering signals to iOS devices | Until delivered |
 | Cloudflare, Inc. ([privacy contact](https://www.cloudflare.com/privacypolicy/)) | United States and the countries of the Cloudflare data centers handling the request | Hash value, random device identifier, network information (such as IP address) | When signals are sent or connections are kept after connecting an account, and when you visit the website | Relaying sync signals, serving the website | Not stored (seconds, or in memory while connected) |
 | GitHub, Inc. ([privacy contact](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement)) | United States | Network information (such as IP address) | When you open the app screen (update check) and when you visit the website | Serving the update file and the website | Not received by the Operator (subject to GitHub's policy) |
 
-* **How to refuse**: if you do not connect a Google account, no transfers to Google, Apple or Cloudflare take place and you can use your tasks on the device only (without sync). After connecting, you can stop at any time with [Disconnect Google account] in Settings. The update check sends nothing that identifies you.
+* **How to refuse and its effect**:
+  * If you do not connect a Google account, your account email, tasks and device activity records are not transferred abroad and no sync signals are exchanged; you can use your tasks on the device only (without sync). After connecting, you can stop at any time with [Disconnect Google account] in Settings.
+  * There is no setting to turn off the push device registration token that the Android and iOS apps create when first opened (no account or tasks), or the network information (such as IP addresses) processed for the update check and website visits. If you do not want this, you can stop using or uninstall the App. If you use the App offline, the update check does not happen, but you will not be told when your version is no longer supported.
 * **Safeguards**: these providers state that they protect such transfers with recognized safeguards, such as the EU–U.S. Data Privacy Framework or Standard Contractual Clauses. See each provider's privacy policy linked above for details.
 
 ---
