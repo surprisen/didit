@@ -1,0 +1,6 @@
+{
+  "android": { "minVersionCode": 1 },
+  "ios": { "minVersion": "1.0.0" },
+  "macos": { "minVersion": "1.0.0" },
+  "windows": { "minVersion": "1.0.0" }
+}
