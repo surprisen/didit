@@ -22,7 +22,8 @@ Didit은 광고 추적 식별자를 수집하지 않으며, 사용 통계·분�
 * **항목**: Google 계정 이메일 주소, 할 일 동기화 파일(`todonotification_backup.json`), 기기 접속 기록(기기마다 내용 없는 파일 하나. 파일 이름에 기기별 무작위 식별자와 기기 종류(Android, iOS, Windows, macOS)를 담고, 파일 수정 시각을 마지막 접속 시각으로 씁니다)
 * **목적**: 여러 기기 간 할 일 동기화 및 백업. 기기 접속 기록은 같은 계정에 최근 사용한 다른 기기가 없을 때 실시간 동기화 신호(아래 3번)를 보내지 않기 위해서만 씁니다
 * **보관 장소**: 사용자 본인의 Google Drive 안에 있는 앱 전용 숨김 폴더(`appDataFolder`)
-* **접근 범위**: 앱은 사용자의 Drive 전체에 접근할 수 없으며, Didit이 만든 앱 전용 폴더에만 접근합니다.
+* **접근 범위**: 앱은 사용자의 Drive 전체에 접근할 수 없으며, Didit이 만든 앱 전용 폴더에만 접근합니다. 요청하는 Google 권한은 앱 전용 폴더 접근(`https://www.googleapis.com/auth/drive.appdata`)과 로그인·계정 이메일 확인(`openid`, `email`)뿐입니다.
+* **Google API 사용자 데이터 정책**: Didit이 Google API로 받은 정보를 사용하고 다른 앱으로 전송하는 방식은 [Google API 서비스 사용자 데이터 정책](https://developers.google.com/terms/api-services-user-data-policy)(제한적 사용 요건 포함)을 따릅니다. 이 정보는 할 일 동기화에만 쓰며, 광고에 쓰거나 판매하거나 제3자에게 넘기지 않습니다.
 * **로그인 정보**: Google 로그인 인증 정보는 기기 안에만 보관됩니다 (Android: Google Play 서비스, iOS: 기기 키체인. 앱을 열지 않고 위젯·Siri에서 바로 동기화할 수 있도록 앱과 Didit 위젯이 함께 쓰며, 이 기기에서만 사용되고 백업이나 기기 이전으로 옮겨지지 않습니다. macOS: 기기 키체인, 앱만 사용. Windows: `%LOCALAPPDATA%\Didit\GoogleAuth` 폴더).
 
 ### 3) 실시간 동기화 알림 (계정 연결 시)
